@@ -1,0 +1,120 @@
+
+using System.Runtime.CompilerServices;
+using System;
+
+public interface ICadastroAluno
+{
+    void AdicionarAluno(Aluno aluno);
+    List<Aluno> ListaAlunos();
+}
+
+
+public class Aluno
+{
+    private readonly int _matricula;
+    private readonly string _nome;
+    private int _matricula { get; set; }
+    private string _nome { get; set; }
+
+    private DateTime _datanascimento { get; set; }
+    public Aluno(int matricula, string nome, DateTime dataNascimento)
+    {
+        _matricula = matricula;
+        _nome = nome;
+        _datanascimento = dataNascimento;
+    }
+    
+    public string Nome
+    {
+        get
+        {
+            return _nome;
+
+        }
+        set
+        {
+            _nome = value;
+        }
+
+    }
+
+    public class CadastroAlunoEmMemoria : ICadastroAluno
+    {
+        private List<Aluno> _lstAluno;
+
+        public CadastroAlunoEmMemoria()
+        {
+            _lstAluno = new List<Aluno>();
+        }
+        public void AdicionarAluno(Aluno aluno)
+        {
+            _lstAluno.Add(aluno);
+        }
+
+        public List<Aluno> ListaAlunos()
+        {
+            return _lstAluno;
+        }
+    }
+
+    public class Program
+    {
+        public static void Main()
+        {
+            ICadastroAluno i = new CadastroAlunoEmMemoria();
+
+            Aluno aluno = new Aluno(1, "Clara", new DateTime(2015, 3, 29));
+            i.AdicionarAluno(aluno);
+
+            aluno = new Aluno(2, "Berenice", new DateTime(2020, 10, 17));
+            i.AdicionarAluno(aluno);
+
+            aluno = new Aluno(3, "Diego", new DateTime(1981, 09, 03));
+            i.AdicionarAluno(aluno);
+
+            string pesquisa = string.Empty;
+
+            while (pesquisa != "q" && pesquisa != "Q")
+            {
+                Console.WriteLine("Qual o nome que deseja pesquisar? ");
+                pesquisa = Console.ReadLine();
+
+                /*
+                foreach(Aluno obj in i.ListaAlunos())
+                {
+                    if(obj.nome == pesquisa)
+                    {
+                        Console.WriteLine($"Aluno {obj.nome} se encontra na lista.");
+                        Console.ReadKey();
+                    }
+                }
+                */
+
+                /*
+                foreach (Aluno obj in i.ListaAlunos())
+                {
+                    if(obj.nome.Contains(pesquisa))
+                    {
+                        Console.WriteLine($"Aluno {obj.nome} se encontra na lista.");
+                        Console.ReadKey();
+                    }               
+                }
+                */
+
+                Aluno auxAluno = i.ListaAlunos().Find(s => s.Nome.Contains(pesquisa));
+
+                var flag = i.ListaAlunos().Select(s => s.Nome.Contains("a"));
+
+                if (auxAluno != null)
+                {
+                    Console.WriteLine($"Aluno {auxAluno.Nome} está na lista!");
+                }
+
+                var x = i.ListaAlunos().Where(a => a.Nome.Contains("a"));
+
+
+            }
+
+        }
+    }
+}
