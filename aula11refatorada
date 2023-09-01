@@ -1,0 +1,120 @@
+using System;
+
+namespace Biblioteca
+{
+    public interface ICadastroAluno
+    {
+        void AdicionarAluno(Aluno aluno);
+        IList<Aluno> ListaAlunos();
+    }
+
+
+    public class Aluno 
+    {
+        private readonly int _matricula;
+        private readonly string _nome;
+        private DateTime _dataNascimento { get; set; }
+        public Aluno(int matricula, string nome, DateTime datanascimento)
+        {
+            _matricula = matricula;
+            _nome = nome;
+            _dataNascimento = datanascimento;
+        }
+
+        public string Nome
+        {
+            get{return _nome;}
+        }
+
+        public DateTime DataNascimento
+        {
+            get{ return _dataNascimento;}
+        }
+    }
+
+    public class CadastroAlunoEmMemoria : ICadastroAluno
+    {
+        private List<Aluno> _lstAluno;
+
+        public CadastroAlunoEmMemoria()
+        {
+            _lstAluno = new List<Aluno>();
+        }
+        public void AdicionarAluno(Aluno aluno)
+        {
+            _lstAluno.Add(aluno);
+        }
+
+        public IList<Aluno> ListaAlunos()
+        {
+            return _lstAluno;
+        }
+
+        public static int CalcularIdade(DateTime dataNascimento )
+        {
+            int age = DateTime.Now.Year - dataNascimento.Year;
+
+            return age;
+        }
+    }
+}
+
+
+
+//////////////////////////////////////////////////////
+
+using Biblioteca;
+
+public class Program
+{
+    public static void Main()
+    {
+        ICadastroAluno i = new CadastroAlunoEmMemoria();
+
+        Aluno aluno = new Aluno(1, "Clara", new DateTime(2015, 3, 29));
+        i.AdicionarAluno(aluno);
+
+        aluno = new Aluno(2, "Berenice", new DateTime(2020, 10, 17));
+        i.AdicionarAluno(aluno);
+
+        aluno = new Aluno(3, "Diego", new DateTime(1981, 09, 03));
+        i.AdicionarAluno(aluno);
+
+        aluno = new Aluno(4, "Ana", new DateTime(1998, 09, 06));
+        i.AdicionarAluno(aluno);
+
+        string pesquisa = string.Empty;
+
+        while (pesquisa != "q" && pesquisa != "Q")
+        {
+            Console.WriteLine("Qual o nome que deseja pesquisar? ");
+            pesquisa = Console.ReadLine();
+
+            Aluno? auxAluno = i.ListaAlunos().FirstOrDefault(s => s.Nome.Contains(pesquisa));
+
+
+            var flag = i.ListaAlunos().Select(s => s.Nome.Contains("a"));
+
+            if (auxAluno != null)
+            {
+                Console.WriteLine($"Aluno {auxAluno.Nome} está na lista!");
+            }
+
+            var filtro = i.ListaAlunos().Where(a => a.Nome.Contains("a"));
+
+            foreach(var a in filtro)
+            {
+                int idade = CadastroAlunoEmMemoria.CalcularIdade(a.DataNascimento);
+                
+                Console.WriteLine($"A idade da pessoa {a.Nome} é {idade}");
+            }
+
+            List<Aluno> ListaAluno = new List<Aluno>();
+            ListaAluno.AddRange(filtro);
+
+            IEnumerable<Aluno> ienumerable = ListaAluno;
+            ICollection<Aluno> icollection = ListaAluno;
+            IList<Aluno> ilist = ListaAluno;
+        }
+    }
+}
