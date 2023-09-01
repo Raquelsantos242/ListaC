@@ -1,0 +1,57 @@
+using System.Runtime.CompilerServices;
+
+public interface ICadastroAluno
+{
+    void AdicionarAluno(Aluno aluno);
+    IList<Aluno> ListaAlunos();
+}
+
+
+public class Aluno
+{
+
+    public int matricula { get; set; }
+    public string nome { get; set; }
+    public Aluno(int matricula, string nome )
+    {
+        this.matricula = matricula;
+        this.nome = nome;
+    }
+
+}
+
+public class CadastroAlunoEmMemoria : ICadastroAluno
+{
+    private IList<Aluno> _lstAluno;
+    
+    public CadastroAlunoEmMemoria()
+    {
+        _lstAluno = new List<Aluno>();
+    }
+    public void AdicionarAluno(Aluno aluno)
+    {
+        _lstAluno.Add(aluno);
+    }
+
+    public IList<Aluno> ListaAlunos()
+    {
+        return _lstAluno;
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        ICadastroAluno i = new CadastroAlunoEmMemoria();
+        
+        Aluno aluno = new Aluno(1, "Clara");        
+        i.AdicionarAluno(aluno);
+
+        Aluno aluno1 = new Aluno(2, "Bere");
+        i.AdicionarAluno(aluno1);
+
+        Aluno aluno2 = new Aluno(3, "Maria");
+        i.AdicionarAluno(aluno2);
+    }
+}
