@@ -1,0 +1,91 @@
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+
+public delegate void MetodoDeSalvar(Aluno aluno, object obj);
+
+
+public class Aluno
+{
+    public int Id { get; set; }
+    public string Nome { get; set; }
+    public int Idade { get; set; }
+
+    public override string ToString()
+    {
+        return $"Id: {Id}, Nome: {Nome}, Idade: {Idade}";
+    }
+}
+
+public interface ISalvar
+{
+    void Salvar(Aluno aluno);
+}
+
+
+public class Armazenamento : ISalvar
+{
+    private List<Aluno> lstAluno;
+    private const string nomeArquivo = "ExemploArquivo.txt";
+    private readonly MetodoDeSalvar metodoSalvar;
+
+
+    public Armazenamento(MetodoDeSalvar funcao)
+    {
+        lstAluno = new List<Aluno>();
+        metodoSalvar = funcao;
+    }
+
+    public void Salvar(Aluno aluno)
+    {
+        if (metodoSalvar.Method.Name == "SalvarEmLista")
+            metodoSalvar(aluno, lstAluno);
+        if (metodoSalvar.Method.Name == "SalvarEmArquivo")
+            metodoSalvar(aluno, nomeArquivo);
+    }
+}
+
+
+class Program
+{
+
+    public static void SalvarEmLista(Aluno aluno, object lstAluno)
+    {
+
+        ((List<Aluno>)lstAluno).Add(aluno);
+
+        Console.WriteLine($"O Aluno {aluno.ToString()} foi salvo em LISTA");
+
+    }
+
+    public static void SalvarEmArquivo(Aluno aluno, object NomeArquivo)
+    {
+        Console.WriteLine($"O Aluno {aluno.ToString()} foi salvo no ARQUIVO {NomeArquivo}");
+    }
+
+
+
+    public static void Main()
+    {
+        Aluno aluno1 = new Aluno() { Id = 1, Nome = "João", Idade = 20 };
+        Aluno aluno2 = new Aluno() { Id = 2, Nome = "Maria", Idade = 22 };
+
+        MetodoDeSalvar metodo = SalvarEmLista;
+
+        ISalvar armazenamento = new Armazenamento(metodo);
+
+        armazenamento.Salvar(aluno1);
+
+
+        metodo = SalvarEmArquivo;
+
+        armazenamento = new Armazenamento(metodo);
+
+        armazenamento.Salvar(aluno1);
+
+
+        Console.WriteLine(aluno1.ToString());
+    }
+}
